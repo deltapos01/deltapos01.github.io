@@ -1,29 +1,48 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTML 홈페이지 만들기</title>
+    <title>파일 업로드</title>
 </head>
-
 <body>
-    <a href="index.html">
-        <h1>HTML 홈페이지 만들기</h1>
-    </a>
+    <h2>파일 업로드</h2>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <label for="fileInput">파일 선택:</label>
+        <input type="file" id="fileInput" name="file" multiple><br><br>
+        <button type="button" onclick="uploadFile()">파일 업로드</button>
+    </form>
+    
+    <p id="message"></p>
 
-    <h2>목차</h2>
-    <ul>
-        <li>HTML의 탄생</li>
-        <li>HTML 특징</li>
-        <li>HTML 페이지 구조</li>
-        <li>HTML 홈페이지 만들기</li>
-    </ul>
+    <script>
+        function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const files = fileInput.files;
+            
+            if (files.length === 0) {
+                document.getElementById('message').innerText = "파일을 선택하세요.";
+                return;
+            }
 
-    <h3>HTML의 탄생</h3>
-    <p>HTML은 <strong>Hyper Text Markup Language</strong>라는 용어의 약자로서 물리학자 <strong>팀 버너스리</strong>가 1990년에 HTTP, URL,
-        브라우저와 함께 개발했습니다. 팀 버너스리는 인터넷의 기반을 닦은 여러 공로로 웹의 아버지라고 불리는 인물 중 하나입니다.</p>
+            const formData = new FormData();
+            for (let i = 0; i < files.length; i++) {
+                formData.append('file', files[i]);
+            }
 
+            // 파일을 서버에 업로드하는 AJAX 요청
+            fetch('/upload', {  // 실제 서버 경로로 수정해야 함
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(result => {
+                document.getElementById('message').innerText = "파일 업로드 성공: " + result;
+            })
+            .catch(error => {
+                document.getElementById('message').innerText = "파일 업로드 실패: " + error;
+            });
+        }
+    </script>
 </body>
-
 </html>
